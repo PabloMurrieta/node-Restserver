@@ -42,7 +42,8 @@ const UsuarioSchema = Schema({
 //separando la que no necesitamos (en este caso __version y password) y dejando la demas que queremos en la varible usuarios y al final retornandola 
 
 UsuarioSchema.methods.toJSON = function () {
-    const { __v, password, ...usuario } = this.toObject();
+    const { __v, password, _id,...usuario } = this.toObject();
+    usuario.uid = _id;
     return usuario;
 };
 

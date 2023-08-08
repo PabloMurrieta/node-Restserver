@@ -1,6 +1,7 @@
 import { validationResult } from 'express-validator';
 
 
+
 const validarCampos = (req, res, next) =>{
     //Si hay errores devolver errors que fueron encontrados pos express validator
     const errors = validationResult(req);

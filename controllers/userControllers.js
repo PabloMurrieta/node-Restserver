@@ -80,11 +80,12 @@ const usuariosGet = async (req = request, res = response) => {
 
     //Fisicamente
    // const usuario = await Usuario.findByIdAndDelete(id);
-//Se cambia a false su estado para mantener la integridad referencial
+  //Se cambia a false su estado para mantener la integridad referencial
    const usuario = await Usuario.findByIdAndUpdate(id, { Estado: false } );
-    res.json({
-       usuario
-    });
+   const usuarioAutenticado = req.usuario;
+
+    
+    res.json({ usuario, usuarioAutenticado });
  }
 
 
