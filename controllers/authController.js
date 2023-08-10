@@ -1,9 +1,10 @@
-import {response} from 'express';
+import {json, response} from 'express';
 import { check } from 'express-validator';
 import bcryptjs from 'bcryptjs'
 
 import Usuario from '../models/usuario.js';
 import { generarJWT } from '../helpers/generarJWT.js';
+import { googleVerify } from '../helpers/google-verify.js';
 
 const login = async (req, res =response) =>{
 
@@ -62,6 +63,65 @@ const login = async (req, res =response) =>{
   
 }
 
+const googleSignIn = async(req, res = response) =>{
+
+    const {id_token} = req.body;
+
+    try {
+        
+        const {name, email, picture} = await googleVerify(id_token);
+
+
+        //Ver si el usuario ya se encuentra registrado en laa BD ,es LET porque cambiare el valor de usuario dependiendo del caso
+        let usuario = await Usuario.findOne({email});
+
+        //Si no existe
+        if(!usuario){
+            //Tengo que crearlo
+            const data = {
+
+                name,
+                email,
+                password:':P',
+                google: true,
+                rol: "USER_ROLE",
+            };
+            //Le mandamos la data para la creaciondel usuario
+            usuario = new Usuario(data);
+            // guardamos en BD
+            await usuario.save();
+        }
+
+        //Si el usuario de google tiene su "Estado en : false" le negamos su identificacion
+        if(!usuario.Estado){
+            return res.status(401).json({
+                msg:'hable con el administrador, usuario bloqueado'
+            })
+        }
+
+        //Generar Json Web Token
+        const token = await generarJWT(usuario.id);
+
+
+        res.json({
+            usuario,
+            token,
+            email
+        })  
+
+    }catch (error) {
+        res.status(400).json({
+            ok:false,
+            msg:' El token no se pudo verificar'
+        })
+        console.log(error);
+        
+    }
+
+    
+}
 export{
-    login
+    login,
+    googleSignIn
+
 }
