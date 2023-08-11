@@ -1,3 +1,4 @@
+import { Category, Product } from '../models/index.js';
 import Role from '../models/rol.js';
 import Usuario from '../models/usuario.js';
 
@@ -36,10 +37,48 @@ const existeUsuarioPorId = async (id) =>{
         }
 }
 
+const existeCategoryPorId = async (id) =>{
+
+    //Verificar si el id  existe
+    //Al hacer este cambio, el método findById buscará el documento en la base de datos usando el ID proporcionado en lugar de buscar un documento con el campo _id igual a { id: valor }
+    const existeCategory = await Category.findById(id);
+
+        if(!existeCategory){
+           throw new  Error(`El id: ${ id} no existe`);
+       }
+}
+
+
+const existeProductPorId = async (id) =>{
+
+    //Verificar si el id  existe
+    //Al hacer este cambio, el método findById buscará el documento en la base de datos usando el ID proporcionado en lugar de buscar un documento con el campo _id igual a { id: valor }
+    const existeProduct = await Product.findById(id);
+
+        if(!existeProduct){
+           throw new  Error(`El id: ${ id} no existe`);
+       }
+}
+
+const existeProductName = async (name) =>{
+
+    //Verificar si el id  existe
+    //Al hacer este cambio, el método findById buscará el documento en la base de datos usando el ID proporcionado en lugar de buscar un documento con el campo _id igual a { id: valor }
+    const existeProduct = await Product.findOne({name});
+
+        if(existeProduct){
+           throw new  Error(`El producto: ${ name} ya existe`);
+       }
+}
+
+
 export {
     esRolValido,
     emailExiste,
-    existeUsuarioPorId
+    existeUsuarioPorId,
+    existeCategoryPorId,
+    existeProductPorId,
+    existeProductName
 
 }
 
